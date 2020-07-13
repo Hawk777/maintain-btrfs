@@ -1,0 +1,86 @@
+.TH MAINTAIN\-BTRFS 8 2020-07-12
+.SH NAME
+maintain\-btrfs \- run maintenance on btrfs filesystems
+.SH SYNOPSIS
+.SY maintain\-btrfs
+.OP \-\-no\-scrub
+.OP \-\-no\-defragment
+.OP \-\-no\-balance
+.OP \-\-no\-trim
+.OP \-\-verbose
+.OP \-\-help
+.OP \-\-version
+.OP \-hvV
+.I mountpoint
+\&.\|.\|.\&
+.YS
+.SH DESCRIPTION
+Run maintenance on one or more btrfs filesystems.
+.PP
+The typical maintenance steps are scrub, device statistics check, defragment, balance, and trim.
+Steps may be skipped.
+.SH OPTIONS
+.TP
+.B \-\-no\-scrub
+Do not verify all blocks against their checksums to detect corrupt data.
+.TP
+.B \-\-no\-defragment
+Do not defragment files into contiguous storage for faster access.
+This may be useful on solid-state drives where fragmentation has little performance impact.
+.TP
+.B \-\-no\-balance
+Do not move data out of low-utilization chunks and return them to the free space pool.
+.TP
+.B \-\-no\-trim
+Do not notify the underlying block devices of the location of unused space.
+This may be useful on drives which do not support the SATA TRIM or similar mechanism, though attempting a trim on such a device will fail silently, generally quickly.
+This may also be useful on certain solid-state drives where TRIM causes issues.
+.TP
+.B \-\-verbose \-v
+Display progress during operations and extra informational notes.
+Normally, only errors are displayed.
+In any case, progress and informational notes go to standard output while errors go to standard error.
+.TP
+.B \-\-help \-h
+Display usage information and exit.
+.TP
+.B \-\-version \-V
+Display program version number and exit.
+.SH EXIT STATUS
+.TP
+.B 0
+All operations completed successfully, except that TRIM may have failed due not being supported.
+The scrub and statistics check operations did not detect any filesystem errors.
+.TP
+.B 1
+An operation failed or a filesystem error was detected.
+.SH NOTES
+All operations touch as much of the filesystem as possible.
+The scrub, statistics, balance, and trim operations always operate on the whole filesystem.
+Defragmentation operates on as much of the filesystem as possible (but see
+.BR BUGS );
+it does not stop at subvolume boundaries.
+.SH BUGS
+Defragmentation does not move extents that are at least 32\ MiB in size.
+This size threshold ought to be configurable.
+.PP
+Balancing always relocates data chunks that are less than 30% full and metadata chunks that are less than 10% full.
+These thresholds ought to be configurable.
+.PP
+If
+.I mountpoint
+is not the top-level subvolume, scrubbing, balancing, and trimming will affect the whole filesystem, but defragmentation will only be done on files within
+.IR mountpoint .
+.PP
+If a directory within
+.I mountpoint
+has another filesystem mounted on it, defragmentation will not enter the mounted filesystem, but the files in the original filesystem that are hidden by the mount will also not be defragmented.
+.PP
+If the filesystem mounted at
+.I mountpoint
+is also mounted again at some subdirectory of
+.IR mountpoint ,
+defragmentation will cross the mount point and visit common files twice.
+.SH SEE ALSO
+.BR btrfs (8),
+.BR fstrim (8)

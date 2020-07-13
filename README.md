@@ -61,4 +61,4 @@ Installation
 
 To compile `maintain-btrfs`, just run `make`. You should need nothing besides a
 C compiler and the Linux kernel headers. The binary can be copied to and run
-from any directory.
+from any directory. A manual page is provided in `maintain-btrfs.8`.
