@@ -96,13 +96,11 @@ static bool do_balance_fd_auxfds(const char *mountpoint, bool verbose, int fd, i
 			if(ioctl(fd, BTRFS_IOC_BALANCE_PROGRESS, &args) >= 0) {
 				unsigned int permille;
 				if(!args.stat.expected) {
-					permille = 500;
-				} else if(args.stat.considered > args.stat.expected) {
-					permille = 1000;
+					permille = 0;
 				} else {
-					permille = args.stat.considered * 1000 / args.stat.expected;
+					permille = args.stat.completed * 1000 / args.stat.expected;
 				}
-				printf("%" PRIu64 " / %" PRIu64 " considered = %u.%u%%\r", (uint64_t) args.stat.considered, (uint64_t) args.stat.expected, permille / 10, permille % 10);
+				printf("%" PRIu64 " / %" PRIu64 " expected = %u.%u%% (%" PRIu64 " considered)\r", (uint64_t) args.stat.completed, (uint64_t) args.stat.expected, permille / 10, permille % 10, (uint64_t) args.stat.considered);
 				fflush(stdout);
 			}
 		}
