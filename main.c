@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "ops.h"
 
-#define VERSION "dev"
+#define VERSION "1.0.1"
 
 int main(int argc, char **argv) {
 	// Parse command-line parameters.
