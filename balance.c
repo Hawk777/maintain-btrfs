@@ -142,7 +142,7 @@ static bool do_balance_fd(const char *mountpoint, bool verbose, int fd) {
 	// signal-delivery sense) so just running it straight makes the process
 	// unkillable (even with kill -9). However, BTRFS_BALANCE_CTL_CANCEL is
 	// available, so make a signalfd to detect SIGINT, SIGQUIT, and SIGTERM and
-	// cancel the in-progress scrubs. In order to accomplish that, the balance
+	// cancel the in-progress balance. In order to accomplish that, the balance
 	// runs in a separate thread and the main thread handles termination
 	// signals, thread reaping, and progress display.
 	//
