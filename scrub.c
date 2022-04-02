@@ -212,7 +212,9 @@ static bool do_scrub_fd_auxfds(const char *mountpoint, bool verbose, int fd, int
 			do { \
 				if(verbose || cookie.threads[i].args.progress.field_name) { \
 					fprintf(cookie.threads[i].args.progress.field_name ? stderr : stdout, "%s: device ID %" PRIu64 ": scrub detected %" PRIu64 " " error_name " error(s)\n", mountpoint, (uint64_t) cookie.threads[i].args.devid, (uint64_t) cookie.threads[i].args.progress.field_name); \
-					ok = false; \
+					if(cookie.threads[i].args.progress.field_name) { \
+						ok = false; \
+					} \
 				} \
 			} while(0)
 			CHECK_ERROR(read_errors, "read");
